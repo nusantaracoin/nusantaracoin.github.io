@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>nusantaracoin</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .form {
+            margin-bottom: 20px;
+        }
+
+        .form h2 {
+            margin-top: 0;
+        }
+
+        .form input[type="text"],
+        .form input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+        }
+
+        .form button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .form button:hover {
+            background-color: #45a049;
+        }
+
+        .blockchain-info {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+
+        .blockchain-info h2 {
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div id="login-form" class="form">
+        <h2>Login</h2>
+        <input type="text" id="login-username" placeholder="Username" required><br>
+        <input type="password" id="login-password" placeholder="Password" required><br>
+        <button onclick="login()">Login</button>
+    </div>
+
+    <div id="signup-form" class="form">
+        <h2>Signup</h2>
+        <input type="text" id="signup-username" placeholder="Username" required><br>
+        <input type="password" id="signup-password" placeholder="Password" required><br>
+        <button onclick="signup()">Signup</button>
+    </div>
+
+    <div id="mining-form" class="form">
+        <h2>Mine</h2>
+        <input type="text" id="mining-username" placeholder="Username" required><br>
+        <input type="password" id="mining-password" placeholder="Password" required><br>
+        <input type="text" id="mining-wallet" placeholder="Wallet" required><br>
+        <button onclick="mine()">Mine</button>
+    </div>
+
+    <div id="blockchain-info" class="blockchain-info">
+        <h2>Blockchain Information</h2>
+        <p>Total Blocks: <span id="blockchain-length">Loading...</span></p>
+    </div>
+</div>
+
+<script>
+    // Function to handle signup
+    function signup() {
+        var username = document.getElementById('signup-username').value;
+        var password = document.getElementById('signup-password').value;
+        var data = { username: username, password: password };
+
+        fetch('/signup', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Signup failed');
+            }
+            alert('Signup successful');
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Signup failed');
+        });
+    }
+
+    // Function to handle login
+    function login() {
+        var username = document.getElementById('login-username').value;
+        var password = document.getElementById('login-password').value;
+        var data = { username: username, password: password };
+
+        fetch('/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Login failed');
+            }
+            alert('Login successful');
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Login failed');
+        });
+    }
+
+    // Function to handle mining
+    function mine() {
+        var username = document.getElementById('mining-username').value;
+        var password = document.getElementById('mining-password').value;
+        var wallet = document.getElementById('mining-wallet').value;
+        var data = { username: username, password: password, wallet: wallet };
+
+        fetch('/mine', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Mining failed');
+            }
+            return response.json();
+        })
+        .then(data => {
+            alert('Mining successful\nBlock Index: ' + data.block_index);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Mining failed');
+        });
+    }
+
+    // Fetch and display blockchain information
+    function fetchBlockchainInfo() {
+        fetch('/chain-info')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('blockchain-length').textContent = data.blockchain_length;
+            });
+    }
+
+    // Fetch blockchain information when the page loads
+    fetchBlockchainInfo();
+</script>
+</body>
+</html>
